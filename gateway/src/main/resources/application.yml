@@ -1,0 +1,105 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: gateway-service
+
+  # 【新增】Redis 配置 (必须与 Login 服务保持一致)
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.79.128:8848
+
+    gateway:
+      routes:
+        - id: login-service-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/sysUser/**
+          filters:
+            - PreserveHostHeader
+
+        - id: custom-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/customer/**
+          filters:
+            - PreserveHostHeader
+
+        - id: custom-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/outingRecord/**
+          filters:
+            - PreserveHostHeader
+
+
+        - id: custom-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/bed/**
+          filters:
+            - PreserveHostHeader
+
+
+        - id: foodItem-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/foodItem/**
+          filters:
+            - PreserveHostHeader
+
+
+        - id: dietRecord-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/dietRecord/**
+          filters:
+            - PreserveHostHeader
+
+
+        - id: dietRecord-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/checkInRecord/**
+          filters:
+            - PreserveHostHeader
+
+        - id: dietRecord-service-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/checkOutRecord/**
+          filters:
+            - PreserveHostHeader
+
+
+
+#      default-filters:
+#        # 跨域配置建议放在这里，或者使用 CorsConfigurationSource
+#        - AddResponseHeader=Access-Control-Allow-Origin, *
+#        - AddResponseHeader=Access-Control-Allow-Methods, GET,POST,PUT,DELETE,OPTIONS
+#        - AddResponseHeader=Access-Control-Allow-Headers, *
+
+      discovery:
+        locator:
+          enabled: false
+  data:
+    redis:
+      host: 192.168.79.128
+      port: 6379
+      database: 0
+
+# Sa-Token 配置 (保持原样即可，只要连上同一个 Redis 就能共享 Token)
+sa-token:
+  token-name: satoken
+  timeout: 7200
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    cn.dev33.satoken: DEBUG

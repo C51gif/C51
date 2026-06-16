@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: Login
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.79.128:8848
+        username: nacos
+        password: nacos
+        config:
+          long-poll-timeout: 60000
+          retry-time: 5000
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.79.128:3310/test?serverTimezone=Asia/Shanghai&useSSL=false&characterEncoding=utf-8
+    username: root
+    password: "050607"
+
+
+  data:
+    redis:
+      host: 192.168.79.128
+      port: 6379
+      database: 0
+      password: ""
+
+mybatis-flex:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.neuedu.entity
+
+logging:
+  level:
+    com.neuedu.mapper: debug
+
