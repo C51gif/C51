@@ -33,7 +33,6 @@ public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedS
         result.setCode(200);
         result.setMsg("查找成功");
         result.setData(beds);
-        System.out.println(1111111);
         return result;
     }
 
