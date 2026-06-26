@@ -16,6 +16,8 @@ public interface BedService extends IService<Bed> {
     public MyResult findbyRoom(int room_number);
     public MyResult updateis_occ(int room_number);
 
+    MyResult updateis_occ2(int room_number);
+
     MyResult updateis_occ1(int room_number);
 
     public MyResult updatecount(int room_number);

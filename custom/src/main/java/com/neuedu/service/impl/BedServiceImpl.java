@@ -12,7 +12,6 @@ import com.neuedu.service.BedService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  *  服务层实现。
@@ -85,6 +84,24 @@ public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedS
         return result;
     }
 
+    @Override
+    public MyResult updateis_occ2(int room_number) {
+        MyResult result = new MyResult();
+        boolean success = UpdateChain.of(Bed.class)
+                .set(Bed::getIsOccupied,2)
+                .where(Bed::getRoomNumber).eq(room_number)
+                .update();
+        if(success){
+            result.setCode(200);
+            result.setMsg("更改成功");
+            result.setData(true);
+            return result;
+        }
+        result.setCode(400);
+        result.setMsg("更改失败");
+        result.setData(false);
+        return result;
+    }
 
     @Override
     public MyResult updateis_occ1(int room_number) {
@@ -130,8 +147,15 @@ public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedS
                     MyResult my = findbyRoom(room_number);
                     Bed bed1 = (Bed) my.getData();
                     if(bed1.getCount()>=bed.getMaxCount()){
+                        updateis_occ2(room_number);
+                    }
+                    else if(bed1.getCount()<bed.getMaxCount() && bed1.getCount()>0){
                         updateis_occ(room_number);
                     }
+                    else if(bed1.getCount()==0){
+                        updateis_occ1(room_number);
+                    }
+
 
                     result.setCode(200);
                     result.setMsg("更改成功");
@@ -175,7 +199,13 @@ public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedS
                     //更改宿舍状态
                     MyResult my = findbyRoom(room_number);
                     Bed bed1 = (Bed) my.getData();
-                    if(bed1.getCount()<bed.getMaxCount()){
+                    if(bed1.getCount()>=bed.getMaxCount()){
+                        updateis_occ2(room_number);
+                    }
+                    else if(bed1.getCount()<bed.getMaxCount() && bed1.getCount()>0){
+                        updateis_occ(room_number);
+                    }
+                    else if(bed1.getCount()==0){
                         updateis_occ1(room_number);
                     }
 
