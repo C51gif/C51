@@ -1,5 +1,6 @@
 package com.neuedu.service;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.service.IService;
 import com.neuedu.entity.Bed;
 import com.neuedu.result.MyResult;
@@ -20,4 +21,5 @@ public interface BedService extends IService<Bed> {
     public MyResult updatecount(int room_number);
 
     MyResult updatecount1(int room_number);
+    public MyResult findbyocc(int occ, Page<Bed> page);
 }

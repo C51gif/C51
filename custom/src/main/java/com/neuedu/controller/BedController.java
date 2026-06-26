@@ -89,9 +89,35 @@ public class BedController {
      * @param page 分页对象
      * @return 分页对象
      */
-    @GetMapping("page")
-    public Page<Bed> page(Page<Bed> page) {
+    @PostMapping("page")
+    public Page<Bed> page(@RequestBody Map<String, Object> map) {
+        System.out.println(map);
+        Integer pageNum = Integer.parseInt(String.valueOf(map.get("pageNum")));
+        Integer pageSize = Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Page<Bed> page = new Page<>(pageNum, pageSize);
         return bedService.page(page);
+    }
+
+    @PostMapping("showpage")
+    public MyResult showpage(@RequestBody Map<String, Object> map) {
+        System.out.println(map);
+        int ooc = Integer.parseInt(map.get("ooc").toString());
+        System.out.println(ooc);
+        long pageNum = 1;
+        long pageSize = 8;
+
+        if (map.containsKey("pageNum")) {
+            pageNum = Long.parseLong(map.get("pageNum").toString());
+        }
+        if (map.containsKey("pageSize")) {
+            pageSize = Long.parseLong(map.get("pageSize").toString());
+        }
+
+        // 3. 创建 Page 对象
+        Page<Bed> page = new Page<>(pageNum, pageSize);
+
+        // 4. 调用 Service，把 occ 和 page 都传过去
+        return bedService.findbyocc(ooc, page);
     }
 
 
@@ -105,6 +131,12 @@ public class BedController {
         String room_number = data.get("room_number");
         int room = Integer.parseInt(room_number);
         return bedService.updatecount(room);
+    }
+    @PostMapping("/findbyroom")
+    public MyResult findbyroom(@RequestBody Map<String,String> data) {
+        String room_number = data.get("room_number");
+        int room = Integer.parseInt(room_number);
+        return bedService.findbyRoom(room);
     }
 
 }

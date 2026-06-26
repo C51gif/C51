@@ -53,7 +53,7 @@ public class Bed implements Serializable {
     /**
      * 占用状态: 0-空闲, 1-占用
      */
-    private Boolean isOccupied;
+    private int isOccupied;
 
     /**
      * 逻辑删除: 0-正常, 1-已删除

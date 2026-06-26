@@ -1,15 +1,18 @@
 package com.neuedu.service.impl;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.neuedu.entity.Bed;
 import com.neuedu.mapper.BedMapper;
+import com.neuedu.mapper.CustomerMapper;
 import com.neuedu.result.MyResult;
 import com.neuedu.service.BedService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  *  服务层实现。
@@ -19,6 +22,12 @@ import java.util.List;
  */
 @Service
 public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedService{
+
+    private final CustomerMapper customerMapper;
+
+    public BedServiceImpl(CustomerMapper customerMapper) {
+        this.customerMapper = customerMapper;
+    }
 
     @Override
     public MyResult show() {
@@ -187,6 +196,19 @@ public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedS
         result.setCode(400);
         result.setMsg("系统出错");
         result.setData(null);
+        return result;
+    }
+
+    @Override
+    public MyResult findbyocc(int occ,Page<Bed> page)
+    {
+        MyResult result = new MyResult();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .where(Bed::getIsOccupied).eq(occ);
+        Page<Bed> beds = this.page(page, queryWrapper);
+        result.setCode(200);
+        result.setMsg("111111");
+        result.setData(beds);
         return result;
     }
 }
