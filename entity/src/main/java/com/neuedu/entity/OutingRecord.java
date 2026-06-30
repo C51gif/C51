@@ -70,4 +70,7 @@ public class OutingRecord implements Serializable {
      */
     private Boolean isDeleted;
 
+
+    private Boolean isReturn;
+
 }

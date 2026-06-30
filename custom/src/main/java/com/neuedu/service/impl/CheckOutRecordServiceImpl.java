@@ -1,5 +1,6 @@
 package com.neuedu.service.impl;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  *  服务层实现。
@@ -88,7 +88,7 @@ public class CheckOutRecordServiceImpl extends ServiceImpl<CheckOutRecordMapper,
             if(checkOutRecord.getIsDeleted()){
                 myResult.setCode(408);
                 myResult.setMsg("此记录被删除");
-                myResult.setData(checkOutRecord);
+                myResult.setData(null);
                 return myResult;
             }
             myResult.setCode(200);
@@ -103,21 +103,23 @@ public class CheckOutRecordServiceImpl extends ServiceImpl<CheckOutRecordMapper,
     }
 
     @Override
-    public MyResult show() {
+    public MyResult show(int pageNum, int pageSize) {
         MyResult myResult = new MyResult();
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .select()
                 .where(CheckOutRecord::getIsDeleted).eq(0);
-        List<CheckOutRecord> checkOutRecords = this.list(queryWrapper);
-        if(checkOutRecords.size()>0){
+        Page<CheckOutRecord> page = new Page<>(pageNum, pageSize);
+        Page<CheckOutRecord> pages = this.page(page, queryWrapper);
+
+        if(pages!=null && pages.getRecords()!=null){
             myResult.setCode(200);
             myResult.setMsg("查找成功");
-            myResult.setData(checkOutRecords);
+            myResult.setData(pages);
             return myResult;
         }
-        myResult.setCode(200);
+        myResult.setCode(400);
         myResult.setMsg("查找失败");
-        myResult.setData(checkOutRecords);
+        myResult.setData(null);
         return myResult;
     }
 }

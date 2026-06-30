@@ -16,5 +16,6 @@ public interface CheckOutRecordService extends IService<CheckOutRecord> {
 public MyResult addCheckOutRecord(CheckOutRecord checkOutRecord);
 public MyResult deleteCheckOutRecord(Integer id);
 public MyResult getCheckOutRecord(Integer id);
-public MyResult show();
+
+    MyResult show(int pageNum, int pageSize);
 }

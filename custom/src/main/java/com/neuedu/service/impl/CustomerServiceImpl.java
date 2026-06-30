@@ -3,18 +3,12 @@ package com.neuedu.service.impl;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
-import com.neuedu.entity.CheckInRecord;
 import com.neuedu.entity.Customer;
 import com.neuedu.mapper.CustomerMapper;
 import com.neuedu.result.MyResult;
-import com.neuedu.service.CheckInRecordService;
 import com.neuedu.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  *  服务层实现。
@@ -108,6 +102,26 @@ private CheckInRecordServiceImpl checkInRecordServiceImpl;
         }
         return myResult;
     }
+
+    @Override
+    public MyResult findbyid1(int id) {
+        MyResult myResult = new MyResult();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .eq("id", id);
+        Customer customer = this.getOne(queryWrapper);
+        if (customer != null) {
+            myResult.setCode(200);
+            myResult.setMsg("success");
+            myResult.setData(customer);
+        }
+        else{
+            myResult.setCode(400);
+            myResult.setMsg("fail");
+            myResult.setData(null);
+        }
+        return myResult;
+    }
+
 
 
     @Override

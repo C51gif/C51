@@ -16,4 +16,6 @@ public interface OutingRecordService extends IService<OutingRecord> {
     public MyResult addOutingRecord(OutingRecord record);
     public MyResult updateOutingRecord(LocalDateTime now,int id);
     public MyResult findbyid(int id);
+
+    MyResult findbyReturn(int isReturn, int pageNum, int pageSize);
 }

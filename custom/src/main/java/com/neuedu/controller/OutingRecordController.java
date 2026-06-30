@@ -93,8 +93,11 @@ public class OutingRecordController {
      * @param page 分页对象
      * @return 分页对象
      */
-    @GetMapping("page")
-    public Page<OutingRecord> page(Page<OutingRecord> page) {
+    @PostMapping("page")
+    public Page<OutingRecord> page(@RequestBody Map<String,Object> map) {
+        Integer pageNum = Integer.parseInt(String.valueOf(map.get("pageNum")));
+        Integer pageSize = Integer.parseInt(String.valueOf(map.get("pageSize")));
+        Page<OutingRecord> page = new Page<>(pageNum, pageSize);
         return outingRecordService.page(page);
     }
 
@@ -112,6 +115,14 @@ public class OutingRecordController {
         LocalDateTime now = LocalDateTime.now();
         Integer id = (Integer) data.get("id");
         return outingRecordService.updateOutingRecord(now,id);
+    }
+
+    @PostMapping("findByReturn")
+    public MyResult findByReturn(@RequestBody Map<String, Object> map) {
+        int pageNum = Integer.parseInt(String.valueOf(map.get("pageNum")));
+        int pageSize = Integer.parseInt(String.valueOf(map.get("pageSize")));
+        int isReturn = Integer.parseInt(String.valueOf(map.get("isReturn")));
+        return outingRecordService.findbyReturn(isReturn,pageNum,pageSize);
     }
 
 }

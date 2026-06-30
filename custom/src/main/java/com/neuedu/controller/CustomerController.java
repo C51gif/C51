@@ -117,4 +117,17 @@ public class CustomerController {
         String id_card = data.get("id_card");
         return customerService.del(id_card);
     }
+
+    @PostMapping("findbyId")
+    public MyResult findbuId(@RequestBody Map<String,String> data) {
+        int id = Integer.valueOf(data.get("id"));
+        return customerService.findbyid(id);
+    }
+
+    @PostMapping("findbyId1")
+    public MyResult findbuId1(@RequestBody Map<String,String> data) {
+        int id = Integer.valueOf(data.get("id"));
+        return customerService.findbyid1(id);
+    }
+
 }

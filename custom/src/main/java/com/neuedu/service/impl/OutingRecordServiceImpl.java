@@ -1,5 +1,6 @@
 package com.neuedu.service.impl;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -28,6 +29,12 @@ public class OutingRecordServiceImpl extends ServiceImpl<OutingRecordMapper, Out
         MyResult result = new MyResult();
         Customer customer = (Customer) customerServiceImpl.findbyid(Math.toIntExact(record.getCustomerId())).getData();
         if(customer != null){
+            if(customer.getStatus()==2){
+                result.setCode(400);
+                result.setMsg("此老人已外出");
+                result.setData(null);
+                return result;
+            }
             if(this.save(record)){
                 customerServiceImpl.updateStatus(customer.getIdCard(),2);
                 result.setCode(200);
@@ -56,6 +63,7 @@ public class OutingRecordServiceImpl extends ServiceImpl<OutingRecordMapper, Out
                 Customer customer = (Customer) my1.getData();
                 boolean success = UpdateChain.of(OutingRecord.class)
                         .set(OutingRecord::getReturnTime,now)
+                        .set(OutingRecord::getIsReturn,1)
                         .where(OutingRecord::getId).eq(id)
                         .update();
                 if(success){
@@ -92,4 +100,25 @@ public class OutingRecordServiceImpl extends ServiceImpl<OutingRecordMapper, Out
         result.setData(null);
         return result;
     }
+
+    @Override
+    public MyResult findbyReturn(int isReturn, int pageNum, int pageSize) {
+        MyResult result = new MyResult();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .eq("is_return", isReturn);
+        Page<OutingRecord> page = new Page<>(pageNum, pageSize);
+        Page<OutingRecord> pages = this.page(page, queryWrapper);
+        if(pages!=null && pages.getRecords()!=null){
+            result.setCode(200);
+            result.setMsg("success");
+            result.setData(pages);
+            return result;
+        }
+        result.setCode(400);
+        result.setMsg("fail");
+        result.setData(null);
+        return result;
+    }
+
+
 }

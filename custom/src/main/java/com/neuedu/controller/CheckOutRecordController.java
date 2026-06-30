@@ -94,12 +94,16 @@ public class CheckOutRecordController {
         return checkOutRecordService.page(page);
     }
 
-    @GetMapping("show")
-    public MyResult show() {
-        return checkOutRecordService.show();
+    @PostMapping("show")
+    public MyResult show(@RequestBody Map<String, Object> map) {
+        int pageNum = Integer.parseInt(map.get("pageNum").toString());
+        int pageSize = Integer.parseInt(map.get("pageSize").toString());
+        return checkOutRecordService.show(pageNum, pageSize);
     }
     @PostMapping("add")
     public MyResult add(@RequestBody CheckOutRecord checkOutRecord) {
+        System.out.println("🔥 接收到的对象: " + checkOutRecord);
+        System.out.println("🔥 客户ID: " + checkOutRecord.getCustomerId());
         return checkOutRecordService.addCheckOutRecord(checkOutRecord);
     }
     @PostMapping("del")

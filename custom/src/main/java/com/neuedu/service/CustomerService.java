@@ -16,6 +16,8 @@ public interface CustomerService extends IService<Customer> {
 
     public MyResult findbyid(int id);
 
+    MyResult findbyid1(int id);
+
     public MyResult updateStatus(String id_card, Integer status);
 
     public MyResult del(String id_card);
