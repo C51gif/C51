@@ -4,6 +4,7 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
+import com.neuedu.entity.BedNum;
 import com.neuedu.entity.CheckOutRecord;
 import com.neuedu.entity.Customer;
 import com.neuedu.mapper.CheckOutRecordMapper;
@@ -28,6 +29,8 @@ public class CheckOutRecordServiceImpl extends ServiceImpl<CheckOutRecordMapper,
     private CustomerMapper customerMapper;
     @Autowired
     private CustomerServiceImpl customerServiceImpl;
+    @Autowired
+    private BedNumServiceImpl bedNumServiceImpl;
 
     @Override
     public MyResult addCheckOutRecord(CheckOutRecord checkOutRecord) {
@@ -39,11 +42,17 @@ public class CheckOutRecordServiceImpl extends ServiceImpl<CheckOutRecordMapper,
         Customer customer = customerMapper.selectOneByQuery(queryWrapper);
         if(customer != null){
             if(customer.getIsDeleted()==0){
-                myResult.setCode(200);
-                myResult.setMsg("添加成功");
-                myResult.setData(this.save(checkOutRecord));
-                customerServiceImpl.del(customer.getIdCard());
-                return myResult;
+                MyResult my1 = bedNumServiceImpl.findByCustomerid(Math.toIntExact(checkOutRecord.getCustomerId()));
+                if(my1.getCode()==200){
+                    BedNum bedNum =(BedNum) my1.getData();
+                    myResult.setCode(200);
+                    myResult.setMsg("添加成功");
+                    myResult.setData(this.save(checkOutRecord));
+                    bedNumServiceImpl.updatecustomer(bedNum.getId(),0);
+                    customerServiceImpl.del(customer.getIdCard());
+                    return myResult;
+                }
+
             }
             myResult.setCode(408);
             myResult.setMsg("此用户已被删除");

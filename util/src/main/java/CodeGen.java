@@ -10,7 +10,7 @@ public class CodeGen {
     //子项目路径
     static String project = "custom";
     //表名
-    static String table = "check_in_record";
+    static String table = "bed_num";
     public static void main(String[] args) {
         HikariDataSource hikari = new HikariDataSource();
         hikari.setDriverClassName("com.mysql.cj.jdbc.Driver");

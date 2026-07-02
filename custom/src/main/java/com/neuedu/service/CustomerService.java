@@ -21,4 +21,8 @@ public interface CustomerService extends IService<Customer> {
     public MyResult updateStatus(String id_card, Integer status);
 
     public MyResult del(String id_card);
+
+    MyResult updatebed(String idCard, int roomNum, int bedNum, int bedId);
+
+    MyResult show(int pageNum, int pageSize);
 }

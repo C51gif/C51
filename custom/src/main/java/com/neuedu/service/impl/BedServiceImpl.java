@@ -136,6 +136,7 @@ public class BedServiceImpl extends ServiceImpl<BedMapper, Bed>  implements BedS
         }
         else if(updateResult.getCode()==200){
             Bed bed = (Bed) updateResult.getData();
+            System.out.println(bed);
             if(bed.getCount()<bed.getMaxCount()){
                 boolean success = UpdateChain.of(Bed.class)
                         .setRaw(Bed::getCount,"count+1")

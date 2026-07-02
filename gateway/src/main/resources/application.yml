@@ -69,9 +69,17 @@ spring:
         - id: dietRecord-service-route
           uri: http://localhost:8082
           predicates:
+            - Path=/bedNum/**
+          filters:
+            - PreserveHostHeader
+
+        - id: dietRecord-service-route
+          uri: http://localhost:8082
+          predicates:
             - Path=/checkOutRecord/**
           filters:
             - PreserveHostHeader
+
 
 
 

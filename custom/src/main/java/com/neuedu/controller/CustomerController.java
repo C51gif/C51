@@ -130,4 +130,21 @@ public class CustomerController {
         return customerService.findbyid1(id);
     }
 
+
+    @PostMapping("updateBed")
+    public MyResult updateBed(@RequestBody Map<String,String> data) {
+        int roomNum = Integer.valueOf(data.get("roomNum"));
+        int bedNum = Integer.valueOf(data.get("bedNum"));
+        int bedId = Integer.valueOf(data.get("bedId"));
+        String idCard = data.get("idCard");
+        return customerService.updatebed(idCard,roomNum,bedNum,bedId);
+
+    }
+
+    @PostMapping("show")
+    public MyResult show(@RequestBody Map<String,String> data) {
+        int pageNum = Integer.valueOf(data.get("pageNum"));
+        int pageSize = Integer.valueOf(data.get("pageSize"));
+        return customerService.show(pageNum,pageSize);
+    }
 }

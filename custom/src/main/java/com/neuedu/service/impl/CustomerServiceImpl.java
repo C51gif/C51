@@ -1,8 +1,10 @@
 package com.neuedu.service.impl;
 
+import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
+import com.neuedu.entity.BedNum;
 import com.neuedu.entity.Customer;
 import com.neuedu.mapper.CustomerMapper;
 import com.neuedu.result.MyResult;
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Service;
 public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer>  implements CustomerService{
 @Autowired
 private BedServiceImpl bedServiceImpl;
+@Autowired
+private BedNumServiceImpl bedNumServiceImpl;
+
 @Autowired
 private CheckInRecordServiceImpl checkInRecordServiceImpl;
     @Override
@@ -39,18 +44,18 @@ private CheckInRecordServiceImpl checkInRecordServiceImpl;
                 myResult.setData(null);
                 return myResult;
             }
-            MyResult my = bedServiceImpl.updatecount(customer.getRoomNumber());
-            if(my.getCode()==200){
+            if(this.save(customer)){
                 myResult.setCode(200);
                 myResult.setMsg("添加成功");
-                myResult.setData(this.save(customer));
+                myResult.setData(true);
+                System.out.println(myResult);
                 return myResult;
             }
-            myResult.setCode(my.getCode());
-            myResult.setMsg(my.getMsg());
-            myResult.setData(my.getData());
+            myResult.setCode(400);
+            myResult.setMsg("1111111");
+            myResult.setData(false);
+            return myResult;
         }
-        return myResult;
     }
 
     @Override
@@ -190,6 +195,82 @@ private CheckInRecordServiceImpl checkInRecordServiceImpl;
             myResult.setData(result.getData());
             return myResult;
         }
+        return myResult;
+    }
+
+    @Override
+    public MyResult updatebed(String idCard, int roomNum, int bedNum, int bedId) {
+        MyResult myResult = new MyResult();
+        MyResult result = this.findbyid_card(idCard);
+        if(result.getCode()==200){
+            MyResult my1 = bedNumServiceImpl.findById(bedId);
+            if(my1.getCode()==200){
+                BedNum bed = (BedNum) my1.getData();
+                if(bed.getCustomerId()!=0){
+                    myResult.setCode(400);
+                    myResult.setMsg("此床已有人");
+                    myResult.setData(false);
+                    return myResult;
+                }
+
+                Customer customer = (Customer) result.getData();
+                int id = Math.toIntExact(customer.getId());
+                MyResult my2 = bedNumServiceImpl.findByCustomerid(id);
+                if(my2.getCode()==200){
+                    myResult.setCode(400);
+                    myResult.setMsg("此人已被分配");
+                    myResult.setData(false);
+                    return myResult;
+                }
+                boolean success = UpdateChain.of(Customer.class)
+                        .set(Customer::getRoomNumber,roomNum)
+                        .set(Customer::getBedNumber,bedNum)
+                        .where(Customer::getIdCard).eq(idCard)
+                        .update();
+                if(success){
+                    if(bedNumServiceImpl.updatecustomer(bedId,id).getCode()==200){
+                        MyResult my = bedServiceImpl.updatecount(roomNum);
+                        if(my.getCode()==200){
+                            myResult.setCode(200);
+                            myResult.setMsg("success");
+                            myResult.setData(true);
+                            return myResult;
+                        }
+                        return my;
+                    }
+                    myResult.setCode(400);
+                    myResult.setMsg("更改寝室有错误");
+                    myResult.setData(false);
+                    return myResult;
+                }
+                myResult.setCode(400);
+                myResult.setMsg("用户更改处有错误");
+                myResult.setData(false);
+                return myResult;
+            }
+            return my1;
+
+        }
+        return result;
+    }
+
+
+    @Override
+    public MyResult show(int pageNum, int pageSize){
+        MyResult myResult = new MyResult();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .where(Customer::getIsDeleted).eq(0);
+        Page<Customer> page = new Page<>(pageNum, pageSize);
+        Page<Customer> pages = this.page(page, queryWrapper);
+        if(pages!=null && pages.getRecords()!=null){
+            myResult.setCode(200);
+            myResult.setMsg("查找成功");
+            myResult.setData(pages);
+            return myResult;
+        }
+        myResult.setCode(400);
+        myResult.setMsg("查找失败");
+        myResult.setData(null);
         return myResult;
     }
 }
